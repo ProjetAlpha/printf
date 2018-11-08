@@ -6,7 +6,7 @@
 /*   By: thbrouss <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/29 18:40:57 by thbrouss     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/07 20:35:27 by thbrouss    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/08 21:00:27 by thbrouss    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -25,8 +25,10 @@ typedef struct		s_info
 {
 	int width;
 	int prec;
+	int is_prec;
 	long long int i_arg;
-	int t_len;
+	long long int t_len;
+	long long int tmp;
 	int length;
 	int flag;
 	int	skip;
@@ -37,6 +39,12 @@ typedef struct		s_info
 
 # define FLAGS "sSpdDioOuUxXcC"
 # define U_IM 4294967296
+# define INT_MAX 2147483647
+# define INT_MIN -2147483648
+# define UINT_MAX 4294967295
+# define LONG_MIN -9223372036854775808
+# define LONG_MAX 9223372036854775807
+# define ULONG_MAX 18446744073709551615
 
 enum pos{START = 0, END = 1};
 
