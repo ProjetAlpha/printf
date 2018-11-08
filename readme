@@ -1,0 +1,74 @@
+
+%[flag][min width][precision][length modifier][conversion specifier]
+
+ex: %5.4lx
+
+---------------------LONGEUR : d, i, o, u, x, X (conversion entire).
+
+hh = signed ou unsigned char.
+h = short ou unsigned short int.
+l = long int ou unsigned long int / conversion c en wint_t, coversion s en wchar_t.
+wchar_t = 2 bytes pour chaque char. wint_t * 2 = wchart_t * 2 => 4 bytes par chars. Unicdeo : 0 to 0xFFFF
+unicode range -> 1 byte, 2 bytes, 3 bytes et 4 bytes. 
+ll = long long int ou unsigned long long int.
+j = intmax_t ou uintmax_t.
+z = size_t ou ssize_t. size_t = unisgned int, ssize_t = signed int.
+Commande : echo | gcc -E -xc -include 'stddef.h' - | grep size_t
+=> typedef long unsigned int size_t;
+
+---------------------FLAGS : sSpdDioOuUxXcC.
+
+- s = pas de precision ou > len de la chaine, besoin du charactere null. Sinon pas besoin de char null.
+Si l specifie, convertie en une chaine multi-octets, chars large. Precision => plu d'octets ecrits, nombre octets ecrits non pas le nbre de chars large.
+- S = ls ---> wchar_t est converti en chaine multi-octets.
+- p = void * en hexa.
+- d = int. Precision : conversion avec moins de chiffre => des zeros a gauche. Precision = 0 => sortie vide.
+- D = long unsigned int.
+- i = d.
+- o = unisgned int ---> chiffre octal.
+- O = long unsigned int en octal.
+- u = unisgned int ---> chiffre decimal unsigned.
+- U = long unisgned int decimal.
+- x = chiffre hexadecimal unsigned (abcdef).
+- X = chiffre hexadecimal unsigned (ABCDEF).
+- c = int en unsigned char, si lc => wint_t ---> converti en chaine multi-octets.
+- C = lc.
+
+BONUS : %b ---> binaire, %e --> notation scientifique, %f ---> notation classique. %g --> covsersion en float ou
+notation scientifique.
+
+--------------------EXTRA : %, #, 0, -, +.
+
+%% = affiche un %.
+
+# ---> si x ou X => 0x, si o (1er caractere = 0, si pas deja 1 zero). a, A, e, E f, F, g et G : point decimal, si pas suivi pas un chiffre. g et G : conserve les zeros en tete.
+
+0 ----> rempli avec des zeros. d, i, o, u, x, X, a, A, e, E, f, F, g et G => 0 a gauche, au lieu des espaces.
+- precision avec d, i, o, u, x et X => 0 est ignore.
+- 0 et - => 0 est ignore. 
+
+- ----> padding a gauche, -0 => digit - padding : 000000.
++ ----> nbre signe.
+
+WARNING : 
+	O- ou -O => l'attribut 0 est ignore.
+	%[space][space]+[args] => enleve les espaces.
+
+--------------------PRECISION: TYPE INT. si que . ou negatif => NULL. 
+	
+	- d, i, o, u, c et X : nbre mini de chiffre a faire apparaitre.
+	- a, A, e, E, f et F : nbre de decimales a afficher.
+	- g et G : nbre max de chiffres significatifs.
+	- s et S : nbre max de chars a afficher.
+	- %.3d, 10 => 010.
+	- %.0d, 0 => nada.
+	- %.5s, abcdefg => abcde.
+	- %.3g, 3.1415926 => 3.14 (arrondi 2 eme chiffre). 
+
+-------------------TAILLE MINIMUN: nombre max de caracteres a afficher. ---- TYPE INT.
+	
+	- si la valeur convertie < taille mini => complete par des espaces a gauche.
+	- si la valeur covertie > taille mini, champ elargi, pas de truncate.
+	- largeur negative : |-10| => |           |. 
+	- %8.5f, 1.234 => 1.23400 (8 = max chars, .5 = arrondi a 5 chiffres apres la virgule).
+	- %5s, abc => abc (max 5 chars).
