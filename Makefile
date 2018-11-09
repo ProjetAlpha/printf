@@ -6,7 +6,7 @@
 #    By: thbrouss <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2018/10/24 17:57:21 by thbrouss     #+#   ##    ##    #+#        #
-#    Updated: 2018/11/07 13:32:13 by thbrouss    ###    #+. /#+    ###.fr      #
+#    Updated: 2018/11/08 23:44:21 by thbrouss    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -14,7 +14,7 @@
 .PHONY: all clean fclean re
 
 NAME = libftprintf.a
-OUT = ft_printf
+OUT = ft_test
 MAKE = make
 CC = gcc
 FLAGS = -Wall -Wextra -Werror

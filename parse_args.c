@@ -6,7 +6,7 @@
 /*   By: thbrouss <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/29 18:40:27 by thbrouss     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/08 22:31:46 by thbrouss    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/09 22:26:08 by thbrouss    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -16,13 +16,14 @@
 
 int		is_extra_c(char c)
 {
-	return (c == '#' || c == '0' || c == '-' || c == '+' || c == ' ' || c == '%');
+	return (c == '#' || c == '0' || c == '-' || c == '+' || c == ' ');
 }
 
 int		is_len_modif(char c)
 {
 	return (c == 'h' || c == 'l' || c == 'j' || c == 'z');
 }
+
 
 int		check_extra(char *str, t_info *info)
 {
@@ -155,6 +156,7 @@ int		is_empty(int *extra)
 	return (1);
 }
 
+
 int		count_flags(char *str, t_info *info)
 {
 	int count_flags;
@@ -180,22 +182,37 @@ int		count_flags(char *str, t_info *info)
 			// TODO : mieux handle les %.
 			count_flags++;
 
-			if (*str == '%' && *(str + 1) != '%')
-			{
+			//if (*str == '%' && *(str + 1) != '%')
+			//{
 			//	count_flags++;
+				while (*str == '%' && *(str + 1) == '%')
+				{
+						info->extra[PERCENT]++;
+						str+= 2;
+				}
 				info->pos[START] = &(*str) - begin;
-				str++;
+				if (*str == '%')
+					str++;
+				//if (*(str + 1) != '%')
 				check_extra(&(*str), info);
 				while (is_extra_c(*str))
 				{
-					if (*str == '%' && *(str + 1) == '%')
-						info->extra[PERCENT]++;
 					str++;
+				}
+				while (*str == '%' && *(str + 1) == '%')
+				{
+						info->extra[PERCENT]++;
+						str+= 2;
 				}
 				while (ft_isdigit(*str))
 				{
 					info->width++;
 					str++;
+				}
+				while (*str == '%' && *(str + 1) == '%')
+				{
+						info->extra[PERCENT]++;
+						str+= 2;
 				}
 				if (info->width > 0)
 					info->width = ft_atoi(ft_strsub(begin, &(*str) - (begin + info->width), info->width));
@@ -203,10 +220,20 @@ int		count_flags(char *str, t_info *info)
 				{
 					info->is_prec = 1;
 					str++;
+					while (*str == '%' && *(str + 1) == '%')
+					{
+						info->extra[PERCENT]++;
+						str+= 2;
+					}
 					while (ft_isdigit(*str))
 					{
 						info->prec++;
 						str++;
+					}
+					while (*str == '%' && *(str + 1) == '%')
+					{
+						info->extra[PERCENT]++;
+						str+=2;
 					}
 				}
 				if (info->prec > 0)
@@ -217,23 +244,25 @@ int		count_flags(char *str, t_info *info)
 				else if (info->length > 0)
 					str++;
 				set_flags(*str, info);
-				if (info->flag > 0)
-					str++;
-				if (info->prec > 0 || info->width > 0 || !is_empty(info->extra))
-					str--;
-			}
-			else if (*(str + 1) == '%')
-			{
-				info->pos[START] = &(*str) - begin;
-				info->extra[PERCENT]++;
-				str += 1;
-			}
+				//info->pos[END] = &(*str) - begin;
+				//if (info->flag > 0)
+					//str++;
+				//if (info->prec > 0 || info->width > 0 || !is_empty(info->extra))
+					//str--;
+			//}
+			//else if (*(str + 1) == '%')
+			//{
+				//info->pos[START] = &(*str) - begin;
+				//info->extra[PERCENT]++;
+				//str += 2;
+			//}
 			info->pos[END] = &(*str) - begin;
 			info->next = malloc(sizeof(t_info));
 			info = info->next;
 			init_list(info);
 		}
-		str++;
+		while (*str && ft_isascii(*str) && *str != '%')
+			str++;
 	}
 	if (count_flags == 0)
 		return (-1);
@@ -324,6 +353,8 @@ char	*get_zero(t_info *info)
 			return (NULL);
 	}else
 		return (NULL);
+	//if (info->flag == 0)
+		//n++;
 	info->t_len += n;
 	while (n-- != 0)
 		res[i++] = '0';
@@ -361,65 +392,92 @@ void	conv_length(t_info *info)
 	if ((info->flag == D || info->flag == I) && info->length == 0)
 	  	info->i_arg = (info->i_arg >= 0 || info->i_arg <= 0) ? ((int)info->i_arg) : 0;
 	else if ((info->flag == U || info->flag == X || info->flag == O) && info->length == 0)
-	  	info->i_arg = (info->i_arg >= 0 || info->i_arg <= 0) ? ((unsigned int)info->i_arg) : 0;
+	  	info->i_arg = (info->i_arg <= 0 || info->i_arg >= 0) ? (unsigned int)info->i_arg : 0;
 	else if ((info->flag == LU || info->flag == LX || info->flag == LO) && info->length == 0)
-		info->i_arg = (info->i_arg >= 0 || info->i_arg <= 0) ? ((unsigned long int)info->i_arg) : 0;
+		info->i_arg = (info->i_arg <= 0 || info->i_arg >= 0) ? ((unsigned long int)info->i_arg) : 0;
 	else if (info->length == HH)
-		info->i_arg = info->i_arg <= 0 ? ((unsigned char)info->i_arg) : (char)info->i_arg;
+		info->i_arg = info->i_arg <= 0 ? (unsigned char)info->i_arg : (char)info->i_arg;
 	else if(info->length == H)
-		info->i_arg = info->i_arg >= 0 ? ((unsigned short int)info->i_arg): (short int)info->i_arg;
+		info->i_arg = info->i_arg <= 0 ? ((unsigned short int)info->i_arg): (short int)info->i_arg;
 	else if (info->length == L || info->length == Z)
-		info->i_arg = info->i_arg >= 0 ? (unsigned long int)info->i_arg : (long int)info->i_arg;
+		info->i_arg = info->i_arg <= 0 ? (unsigned long int)info->i_arg : (long int)info->i_arg;
 	else if (info->length == LL || info->length == J)
-		info->i_arg = info->i_arg >= 0 ? (unsigned long long int)info->i_arg : (long long int)info->i_arg;
+		info->i_arg = info->i_arg <= 0 ? (unsigned long long int)info->i_arg : (long long int)info->i_arg;
 	//else if (info->length == J)
 		//info->i_arg = info->i_arg >= 0 ? (unsigned int)info->i_arg : (int)info->i_arg;
 }
 
-char	*conv_base(t_info *info, long long int base, int len)
+char	*conv_base(t_info *info, int base, int len)
 {
 	char *ret;
 	int index;
 	char c;
 	int is_neg;
-	long long int tmp;
-
+	long int tmp;
+	unsigned long int tmp_2;
 	index = 0;
 	is_neg = 0;
+	
+	//if (info->i_arg < UINT_MAX || info->i_arg > UINT_MAX)
 
 	tmp = info->i_arg;
+	//printf("after %ld\n", tmp);
 	if (info->flag == LX)
 		c = 'A';
 	else if (info->flag == X)
 		c = 'a';
 	if ((info->flag == X || info->flag == LX || info->flag == LO || info->flag == U || info->flag == LU
-				|| info->flag == O) && tmp < 0)
-	{	
-		tmp = U_IM - info->i_arg *-1;
+				|| info->flag == O) && tmp < 0 && !(info->i_arg <= UINT_MAX || info->i_arg >= UINT_MAX))
+	{
+		if (!(info->length == J || info->length	== LL))
+			tmp = U_IM - info->i_arg *-1;
+		else
+		{
+			tmp_2 = (ULONG_MAX - info->i_arg * -1) ? (unsigned long int)tmp : 0;
+			tmp = (ULONG_MAX + info->i_arg);
+		}
+		printf("tmp : %ld\n", tmp);
+		if (tmp == 0)
+			return ("0");
 		if (!(ret = malloc(sizeof(char) * (get_nbr_len(info, base) + 1))))
 			return (NULL);
-	}
-	else
+	}else
 	{
-		if (tmp < 0)
-			len++;
 		if (!(ret = malloc(sizeof(char) *(len + 1))))
 			return (NULL);
 	}
-	if (tmp < 0)
+	 if (tmp < 0)
 	{
-		tmp *= -1;
-		is_neg = 1;
+		len++;
+		tmp = ABS(tmp);
 	}
+	if ((unsigned long long)tmp == LONG_MIN)
+		return ("9223372036854775808");
+//	printf("VALUE : %ld\n", tmp);
+	// INT : 9223372036854775807
+	//printf("DIFF : %lu\n", ULONG_MAX - UINT_MAX); // %jx
+	//printf("DIFF_2 : %lu\n", ULONG_MAX - 42); // %lu
+	//printf("DIFF_3 : %ld\n", -U_IM); // %lld
+	//printf("LEN : %d", len);
+	// decoupe en str [0] = 7 chiffres
+	// str[1] = 7 chiffres
+	// str[2] = 7 chiffres
+	// str[3] = ....
+	// ft_atoi(str[i]);
+	//
 	while (tmp != 0)
 	{
 		if (base > 10 && tmp % base >= 10)
+		{
 			ret[index] = (tmp % base - 10) + c;
-		else
+		}
+		else if (tmp % base < 10)
 			ret[index] = tmp % base + '0';
+		//printf("base : %lld\n", base);
 		index++;
 		tmp /= base;
 	}
+	ret[index] = '\0';
 	return (ft_strrev(ret));
 }
 
@@ -463,21 +521,28 @@ char *get_extra(int *extra, t_info *info)
 	//conv_length(info);
 
 	//printf("LEEN : %lld\n", info->t_len);
-	if (info->i_arg < 0)
+	if (info->i_arg < 0 || info->flag == 0)
 		info->width--;
 	if (is_extra(extra, PLUS) && info->i_arg >= 0 && !(info->flag == X || info->flag == LX) &&
-			!(info->flag == O || info->flag == LO))
+			!(info->flag == O || info->flag == LO) && info->flag)
 			calc += 1;
 	if (((is_extra(extra, H_TAG) && info->flag == X) || (is_extra(extra, H_TAG) && info->flag == LX)))
 			calc += 2;
 	if ((info->flag == O || info->flag == LO) && is_extra(extra, H_TAG))
 			calc+= 1;
 	if (is_extra(extra, PLUS) && info->i_arg >= 0 && !(info->flag == X || info->flag == LX) &&
-			!(info->flag == O || info->flag == LO))
+			!(info->flag == O || info->flag == LO) && info->flag)
 			calc += 1;
 	if (is_extra(extra, SPACE) && info->i_arg > 0 && !is_extra(extra, PLUS) && !(info->flag == X || info->flag == LX) &&
-			!(info->flag == O || info->flag == LO))
+			!(info->flag == O || info->flag == LO) && info->flag)
 			calc += 1;
+	if (is_extra(extra, SPACE) && info->i_arg >= 0 && !is_extra(extra, PLUS) && !(info->flag == X || info->flag == LX) &&
+			!(info->flag == O || info->flag == LO) && info->flag)
+	{
+		res = ft_strjoin(res, " ");
+		info->t_len += 1;
+	}
+	// HANDLE PERCENT !
 	//if (info->prec == 0)
 		//calc += 1;
 	calc += info->t_len;
@@ -485,7 +550,7 @@ char *get_extra(int *extra, t_info *info)
 	{
 		//printf("CALC %d\n", calc);
 
-		if (info->prec == 0 && !is_extra(extra, MINUS) && !is_extra(extra, ZERO))
+		if (info->prec == 0 && !is_extra(extra, MINUS) && !is_extra(extra, ZERO) && info->flag)
 		{
 			//printf("before calc 1 : %d\n", calc);
 			calc = info->width - calc;
@@ -493,7 +558,7 @@ char *get_extra(int *extra, t_info *info)
 			//printf("width %d\n", info->width);
 			if (calc > 0 && calc < info->width)
 				res = ft_strjoin(res, fill_str(calc, ' '));
-		}else if (info->prec > 0)
+		}else if (info->prec > 0 && info->flag)
 		{
 			if (info->prec == 1)
 				calc = info->width - 1 - (info->prec + calc +  - get_nbr_len(info, base));
@@ -502,17 +567,19 @@ char *get_extra(int *extra, t_info *info)
 			//printf("calc 2 :  %d\n", calc);
 			if (calc > 0 && calc < info->width)
 				res = ft_strjoin(res, fill_str(calc, ' '));
-		}else if (!is_extra(extra, ZERO))
+		}else if (!is_extra(extra, ZERO) && info->flag)
 		{
 			calc = info->width - calc;
 			if (calc > 0 && calc < info->width)
 				res = ft_strjoin(res, fill_str(calc, ' '));
-		}else if (is_extra(extra, ZERO) && info->prec == 0 && info->is_prec)
+		}else if (is_extra(extra, ZERO) && info->prec == 0 && info->is_prec && info->flag)
 		{
 			calc = info->width - calc;
 			if (calc > 0 && calc < info->width)
 				res = ft_strjoin(res, fill_str(calc, ' '));
-		}else
+		}else if (info->width > 0 && info->flag == 0 && !is_extra(extra, ZERO))
+			res = ft_strjoin(res, fill_str(info->width, ' '));
+		else
 			calc -=info->t_len * 2;
 	}
 	if (!is_extra(info->extra, MINUS))
@@ -524,7 +591,7 @@ char *get_extra(int *extra, t_info *info)
 	if (is_extra(extra, PERCENT))
 		res = ft_strjoin(res, "%");
 	if (is_extra(extra, PLUS) && info->i_arg >= 0 && !(info->flag == X || info->flag == LX) &&
-			!(info->flag == O || info->flag == LO))
+			!(info->flag == O || info->flag == LO) && info->flag)
 	{
 		res = ft_strjoin(res, "+");
 		info->t_len += 1;
@@ -532,7 +599,7 @@ char *get_extra(int *extra, t_info *info)
 	if (is_extra(extra, SPACE) && info->i_arg > 0 && !is_extra(extra, PLUS) && !(info->flag == X || info->flag == LX) &&
 			!(info->flag == O || info->flag == LO))
 	{
-		res = ft_strjoin(res, " ");
+		//res = ft_strjoin(res, " ");
 		info->t_len += 1;
 	}
 	if (info->i_arg < 0 && !(info->flag == X || info->flag == LX) &&
@@ -552,19 +619,19 @@ char *get_extra(int *extra, t_info *info)
 	if (info->i_arg > 0 && (info->flag == O || info->flag == LO) && is_extra(extra, H_TAG))
 	{
 		res = ft_strjoin(res, "0");
-		if (is_extra(extra, H_TAG) && info->prec > 0)
+		if (is_extra(extra, H_TAG) && info->prec > 0 && info->flag)
 			info->prec--;
 	}
 	info->t_len = calc + get_nbr_len(info, base);
-	if (info->prec == 0 && !is_extra(extra, MINUS) && is_extra(extra, ZERO) && info->width > 0 && info->t_len < info->width)
+	if ((info->prec == 0 || info->flag == 0) && !is_extra(extra, MINUS) && is_extra(extra, ZERO) && info->width > 0 && info->t_len < info->width)
 			res = ft_strjoin(res, get_zero(info));
 	//printf("CALC %d\n", calc);
 	//if (info->i_arg < 0)
 		//info->t_len--;
-	if (info->prec > 0)
+	if (info->prec > 0 && info->flag)
 	{
 		info->prec -= get_nbr_len(info, base);
-		if (info->prec > 0)
+		if (info->prec > 0 && info->is_prec == 1)
 			res = ft_strjoin(res, fill_str(info->prec, '0'));
 		calc += info->prec;
 		info->t_len += info->prec;
@@ -574,7 +641,11 @@ char *get_extra(int *extra, t_info *info)
 		res = ft_strjoin(res, conv_base(info, base, get_nbr_len(info, base)));	
 	//printf("CCCC %d\n", calc);
 	if (is_extra(info->extra, MINUS) && info->width > 0 && calc < info->width)
+	{
+		//if (info->flag == 0)
+			//char + 1 == space.
 		res = ft_strjoin(res, fill_str(info->width - calc, ' '));
+	}
 	return (res);
 }	
 
@@ -586,6 +657,9 @@ char	*conv_int(long long int input, t_info *info)
 	res = ft_strnew(0);
 	info->i_arg = input;
 	conv_length(info); 
+	//printf("ARG : %lld\n", info->i_arg);
+	if (info->i_arg == 0)
+		return (res = ft_strjoin(res, "0"));
 	res = ft_strjoin(res, get_extra(info->extra, info));
 	return (res);
 	//TODO : gerer la width + la precision.
@@ -651,7 +725,7 @@ char	*get_between_str(char *str, t_info *current, t_info *next)
 	{
 		if (!(ret = malloc(sizeof(char) * ft_strlen(str) - start)))
 			return (NULL);
-		if (current->flag && str[start + 1] == '\0' )
+		if (current->flag)
 			start++;
 		while (str[start])
 		{
@@ -665,11 +739,13 @@ char	*get_between_str(char *str, t_info *current, t_info *next)
 }
 
 
-int	ft_printf(char *str, ...)
+int	ft_printf(const char *str, ...)
 {
 	int n;
 	int i;
 	char *type;
+	char *conv;
+	conv = (char *)str;
 	long long int ret;
 	t_info *info;
 	char *tmp;
@@ -680,10 +756,10 @@ int	ft_printf(char *str, ...)
 	init_list(info);
 	res = ft_strnew(0);
 
-	if ((n = count_flags(str, info)) == -1)
+	if ((n = count_flags(conv, info)) == -1)
 	{
-		write(1, str, ft_strlen(str));
-		return (ft_strlen(str));
+		write(1, str, ft_strlen(conv));
+		return (ft_strlen(conv));
 	}
 	va_start (va, str);
 	i = 0;
@@ -692,10 +768,10 @@ int	ft_printf(char *str, ...)
 	while (info)
 	{
 		if (i == 0 && info->pos[START] > 0)
-			res = ft_strjoin(res, ft_strsub(str, 0, (str + info->pos[START]) - str));
-		if ((tmp = get_str(str, info)) && is_empty(info->extra))
+			res = ft_strjoin(res, ft_strsub(str, 0, (conv + info->pos[START]) - conv));
+		if ((tmp = get_str(conv, info)) && is_empty(info->extra) && info->width == 0 && info->prec == 0)
 			res = ft_strjoin(res, tmp);
-		if (!is_empty(info->extra) && info->flag == 0)
+		if ((!is_empty(info->extra) || info->width > 0 || info->prec > 0) && info->flag == 0)
 			res = ft_strjoin(res, get_extra(info->extra, info));
 		if ((type = get_type(info->flag)))
 		{
@@ -707,10 +783,10 @@ int	ft_printf(char *str, ...)
 				conv_length(info);
 				if (ret == 0)
 				{
-					res = ft_strjoin(res, get_extra(info->extra, info));
-					res = ft_strjoin(res, "0");
+					//res = ft_strjoin(res, get_extra(info->extra, info));
+					//res = ft_strjoin(res, "0");
 				}
-				else if ((tmp = conv_int(ret, info)))
+				if ((tmp = conv_int(ret, info)))
 					res = ft_strjoin(res, tmp);
 			}else if (ft_strcmp(type, "string") == 0)
 			{
@@ -723,12 +799,12 @@ int	ft_printf(char *str, ...)
 
 			}
 		}
-		if (info->next != NULL && (tmp = get_between_str(str, info, info->next)))
+		if (info->next != NULL && (tmp = get_between_str(conv, info, info->next)))
 			res = ft_strjoin(res, tmp);
 		info = info->next;
 		i++;
 	}
-	va_end (va);
+	//va_end (va);
 	write(1, res, ft_strlen(res));
 	return (ft_strlen(res));
 	//return (NULL);
@@ -737,14 +813,14 @@ int	ft_printf(char *str, ...)
 /*int main(int ac, char **av)
 {
 	//char test[] = "coucou";
-//	int test_d;
-	//test_d = 0L;
-	int test_o = 10;
-	int test_k = -50;
+	//int test_d;
+	//test_d = 32769;
+	unsigned long test_o = 922308U;
+	int test_k = -5064644;
 	if (ac < 2)
 		return (0);
 	printf("\nMy printf\n");
-	ft_printf(av[1], 9223372036854775807, test_o, test_k);
+	ft_printf(av[1], -4294967297, test_o, test_k);
 	printf("\nREAL printf\n");
-	printf(av[1], 9223372036854775807, test_o, test_k);
+	printf(av[1], -4294967297, test_o, test_k);
 }*/
