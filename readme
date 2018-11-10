@@ -1,3 +1,25 @@
+6o_o) Handle printf bug (o_o).
+
+unsigned long long int i = 42949672954846;
+// si unsigned long : lu, lx, lo, ld / L, LL, j, z.
+    if ((~i) == -2)
+    {
+        // ---- cas pour ld  d
+        // printf("-4294967295");
+        // --- cas pour lu   u
+        //printf("18446744069414584321");
+        // --- cas pour lx   x
+        //printf("fffffffff00000001");
+        // --- cas pour lo   o
+        // printf("1777777777740000000001");
+    }
+    else if (i < UINT_MAX)
+        i = ULONG_MAX - ((ULONG_MAX) - (int)i));
+    //else
+        //i;
+
+
+
 
 %[flag][min width][precision][length modifier][conversion specifier]
 
