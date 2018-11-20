@@ -1,72 +1,22 @@
-Code pour float.
+6o_o) Handle printf bug (o_o).
 
-#include <stdio.h>
-#include <stdint.h>
-#include <limits.h> /* for CHAR_BIT */
-
-/** formatted output of ieee-754 representation of float */
-void    f_tob (int *tab, float f)
-{
-    int j;
-    
-    j = 0;
-    uint32_t u;
-    union {
-        float f;
-        uint32_t u;
-    } fu = { .f = f };
-    int i = sizeof f * CHAR_BIT;
-    int binaryRepresentation[sizeof f * CHAR_BIT];
-    
-    //printf ("  ");
-    while (i--)
+unsigned long long int i = 42949672954846;
+// si unsigned long : lu, lx, lo, ld / L, LL, j, z.
+    if ((~i) == -2)
     {
-        tab[j++] = (fu.u >> i) & 0x1;
+        // ---- cas pour ld  d
+        // printf("-4294967295");
+        // --- cas pour lu   u
+        //printf("18446744069414584321");
+        // --- cas pour lx   x
+        //printf("fffffffff00000001");
+        // --- cas pour lo   o
+        // printf("1777777777740000000001");
     }
-}
-// calc : s * m * 2^expo
-// s = 1 bits
-// expo = valeur des 8 bits - 127.
-// m = 23 bits, ajoute 1 en premier pos.
-// compte les bits sets (1), en sachant que ont divise par 2, : bits in M: 0   1    0     0      1  weight:    0.5 0.25 0.125 0.0625 0.03125
-// faire la somme.
-
-void    print(int *tab, int size)
-{
-    int i;
-    
-    i = 0;
-    while (i < size)
-    {
-        if (i == 0)
-            printf("sign : %d\n", tab[i]);
-        else if (i <= 8)
-        {
-            if (i == 1)
-                printf("---expo---\n");
-            printf("%d", tab[i]);
-        }
-        else
-        {
-            if (i == 9)
-                printf("\n--- matissa---\n");
-            printf("%d", tab[i]);
-        }
-        
-        i++;
-    }
-}
-// calc : s * m * 
-int main() {
-   int x=10;
-   int y=25;
-   int z=x+y;
-   float f = 3.14159;
-   int binaryRepresentation[sizeof f * CHAR_BIT];
-   f_tob(binaryRepresentation, f);
-   
-   print(binaryRepresentation, 32);
-}
+    else if (i < UINT_MAX)
+        i = ULONG_MAX - ((ULONG_MAX) - (int)i));
+    //else
+        //i;
 
 
 

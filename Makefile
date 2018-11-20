@@ -6,7 +6,7 @@
 #    By: thbrouss <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2018/10/24 17:57:21 by thbrouss     #+#   ##    ##    #+#        #
-#    Updated: 2018/11/08 23:44:21 by thbrouss    ###    #+. /#+    ###.fr      #
+#    Updated: 2018/11/20 21:23:16 by thbrouss    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -17,12 +17,23 @@ NAME = libftprintf.a
 OUT = ft_test
 MAKE = make
 CC = gcc
-FLAGS = -Wall -Wextra -Werror
+FLAGS = -Wall 
 INCLUDE = ./includes
 
 #------------------------------------FILE--------------------------------------#
 
-FILES=parse_args\
+FILES=utils\
+utils2\
+is_helper\
+debug\
+parse_input\
+conv_all\
+conv_strings\
+conv_void\
+conv_basic\
+conv_un\
+conv_o\
+conv_hex
 
 #----------------------------------SOURCE--------------------------------------#
 
