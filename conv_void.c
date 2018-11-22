@@ -6,7 +6,7 @@
 /*   By: thbrouss <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/19 17:04:30 by thbrouss     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/20 20:18:03 by thbrouss    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/22 01:08:20 by thbrouss    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -39,13 +39,15 @@ static char *get_padding(unsigned long int n, char *str, t_info *info)
 	info->t_len = 0;
 	ret = 0;
 	ret += 2;
+	if (len == 0 && info->is_prec == 0)
+		len++;
 	if (info->prec > 0 && info->is_prec != 0 && info->prec > len)
 		info->t_len = info->width - ((info->prec - len) + len + ret);
 	else if (info->width > len)
 	{
 		if (info->extra[ZERO] == ZERO)
 			return (NULL);
-		info->t_len = info->width - (len + ret);
+		info->t_len = info->width - (len + ret); 
 	}
 	if (info->t_len == 0)
 		return (NULL);
@@ -85,7 +87,6 @@ char	*conv_void(unsigned long int n, t_info *info)
 
 	ret = ft_strnew(0);
 	info->t_len = 0;
-
 	str = conv_ubase(info, 16, get_nbr_len(info, 16, 1));
 	len = ft_strlen(str);
 	if (info->width > 0 && info->extra[MINUS] == 0 && info->width > len)
@@ -96,7 +97,7 @@ char	*conv_void(unsigned long int n, t_info *info)
 	ret = ft_strjoin(ret, "0x");
 	if ((tmp = set_prec(n, info, str)) != NULL)
 		ret = ft_strjoin(ret, tmp);
-	if (len == 0)
+	if (len == 0 && info->is_prec == 0)
 		ret = ft_strjoin(ret, "0");
 	else
 		ret = ft_strjoin(ret, str);

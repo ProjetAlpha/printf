@@ -6,7 +6,7 @@
 /*   By: thbrouss <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/13 16:10:02 by thbrouss     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/20 22:00:14 by thbrouss    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/22 08:47:21 by thbrouss    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -143,7 +143,8 @@ int		parse_str(char *str, t_info *info, va_list args)
 				else
 					write(1, tmp, ft_strlen(tmp));
 				c_len+= ft_strlen(tmp);
-				free(tmp);
+				if (tmp != NULL && ft_strlen(tmp) > 0)
+					free(tmp);
 			}
 			if (info->c_len > 0)
 				c_len += info->c_len;
@@ -151,6 +152,12 @@ int		parse_str(char *str, t_info *info, va_list args)
 			info = info->next;
 		}
 	}
+	if (info->neg > 0)
+	{
+		c_len++;
+		printf("ywy\n");
+	}
+	printf("LEN : %d\n", c_len); 
 	free_lst(info);
 	return (c_len);
 }
@@ -163,24 +170,24 @@ int		ft_printf(const char *str, ...)
 	va_list va;
 	va_start(va, str);
 	return (parse_str((char*)str, info, va));
+	//print_struct(info);
 	//va_end(va);
-	//return (0);
 }
 
-/*int main(void)
+int main(void)
 {
 	//char test_1[] = "%% %%% %%% % %";
 	//char test_2[] = "\nME : |% 20.12ld et % 05D% 4.8hi !|\n";
-	char test_3[] = "|%3.1d| : 3.1\n\n";
+	char test_3[] = "%f %F\n\n";
 
 	int dtr;
 	dtr = 7;
 	//printf("\nRE : |% 20.12ld et % 05D% 4.8hi !|\n", 0x11ffaa147, 24, (short)-2345);
 	//printf("\n PRINTF : |%1.4s| et |%-6.8s| et |%4.2s| \n", str, str, str);
-	ft_printf(test_3, dtr);
-	printf("\n drintf : |%+-20.d|\n", 0);
-	printf("|%d|\n", dtr);
-	ft_printf("|%d|\n\n", dtr);
+	ft_printf(test_3, -1.42, -1.42);
+	printf("%f %lf",  -1.42, -1.42);
+//printf("|%d|\n", dtr);
+	/*ft_printf("|%d|\n\n", dtr);
 	printf("|%1d| : 1\n", dtr);
 	ft_printf("|%1d| : 1\n\n", dtr);
 	printf("|%2d| : 2\n", dtr);
@@ -323,5 +330,5 @@ int		ft_printf(const char *str, ...)
 
 	printf("|%-15d| : -15.15\n", dtr);
 	ft_printf("|%-15d| : -15.15\n\n", dtr);
-	//parse_str(test_2, info);
-}*/
+	//parse_str(test_2, info);*/
+}

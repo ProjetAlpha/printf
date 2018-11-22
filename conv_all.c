@@ -6,7 +6,7 @@
 /*   By: thbrouss <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/14 16:40:21 by thbrouss     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/20 22:00:41 by thbrouss    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/22 07:18:46 by thbrouss    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -43,10 +43,9 @@ char	*conv_int(long long int input, t_info *info)
 
 char	*conv_flags(t_info *info, va_list args, char **curr_str, char *str)
 {
-	if (info->flag == D || info->flag == I)
+	if (info->flag == D || info->flag == LD || info->flag == I)
 		return (conv_int(va_arg(args, long long int), info));
-	if (info->flag == LX || info->flag == LU
-			|| info->flag == LD || info->flag == U
+	if (info->flag == LX || info->flag == LU || info->flag == U
 			|| info->flag == X || info->flag == O || info->flag == LO
 			|| info->length == Z || info->length == LL || info->length == J)
 		return (conv_uint(va_arg(args, unsigned long int), info));
@@ -56,5 +55,7 @@ char	*conv_flags(t_info *info, va_list args, char **curr_str, char *str)
 		return (conv_char(va_arg(args, int), info));
 	else if (info->flag == P)
 		return (conv_void((unsigned long int)va_arg(args, void *), info));
+	else if (info->flag == F || info->flag == LF)
+		return (conv_float(va_arg(args, double), info));
 	return (NULL);
 }

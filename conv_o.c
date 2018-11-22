@@ -6,7 +6,7 @@
 /*   By: thbrouss <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/20 20:18:55 by thbrouss     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/20 21:14:17 by thbrouss    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/21 19:34:57 by thbrouss    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -43,7 +43,7 @@ static	char *get_padding(unsigned long int n, t_info *info, int len)
 		info->t_len = info->width - ((info->prec - len) + len + ret);
 	else if (info->width > len)
 	{
-		if (info->extra[ZERO] == ZERO && info->extra[MINUS] != MINUS)
+		if (info->extra[ZERO] == ZERO && info->extra[MINUS] != MINUS && info->prec == 0 && info->is_prec == 0)
 			return (NULL);
 		info->t_len = info->width - (len + ret);
 	}
@@ -85,7 +85,7 @@ char 	*conv_o(int *extra, t_info *info)
 	i_len = get_nbr_len(info, 8, 1);
 	if (info->u_arg == 0)
 		i_len++;
-	if (info->extra[H_TAG])
+	if (info->extra[H_TAG] && info->u_arg != 0)
 		i_len++;
 	ret = ft_strnew(0);
 	if (info->width > 0 && info->extra[MINUS] != MINUS && info->width > i_len)

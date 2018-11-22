@@ -6,7 +6,7 @@
 /*   By: thbrouss <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/13 15:50:35 by thbrouss     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/20 22:09:06 by thbrouss    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/22 07:18:08 by thbrouss    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -18,7 +18,7 @@ t_values		g_allvalues[] =
 {
 		S, LS, P, D, LD,
 			I, O, LO, U, LU,
-				X, LX, C, LC
+				X, LX, C, LC, F, LF
 };
 
 int		get_nbr_len(t_info *info, int base, int type)

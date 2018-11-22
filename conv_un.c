@@ -6,7 +6,7 @@
 /*   By: thbrouss <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/20 20:02:19 by thbrouss     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/20 22:18:49 by thbrouss    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/20 23:36:09 by thbrouss    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -44,13 +44,11 @@ static	char *get_padding(unsigned long int n, t_info *info, int len)
 	if (info->extra[PLUS] == PLUS && n > 0)
 		ret++;
 	if (info->prec > 0 && info->is_prec != 0 && info->prec > len)
-	{
 			info->t_len = info->width - ((info->prec - len) + len + ret);
-	}
 	else if (info->width > len)
 	{
-		if (info->extra[ZERO] == ZERO && info->extra[MINUS] != MINUS)
-			return (NULL);
+		 if (info->extra[ZERO] == ZERO && info->extra[MINUS] != MINUS && info->prec == 0 && info->is_prec == 0)
+				return (NULL);
 		info->t_len = info->width - (len + ret);
 	}
 	if (info->t_len == 0)
@@ -96,7 +94,7 @@ char 	*conv_un(int *extra, t_info *info)
 	if (info->u_arg == 0)
 		i_len++;
 	ret = ft_strnew(0);
-	if (info->extra[SPACE] == SPACE && info->extra[PLUS] != PLUS && info->u_arg > 0 && !(info->flag == U || info->flag == LU))
+	if (info->extra[SPACE] == SPACE && info->extra[PLUS] != PLUS && !(info->flag == U || info->flag == LU))
 		ret = ft_strjoin(ret, " ");
 	if (info->width > 0 && info->extra[MINUS] != MINUS && info->width > i_len)
 	{

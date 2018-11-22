@@ -6,7 +6,7 @@
 /*   By: thbrouss <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/19 12:05:53 by thbrouss     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/20 22:12:38 by thbrouss    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/22 00:37:00 by thbrouss    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -31,7 +31,16 @@ static	char	*set_zero(int n)
 char	*get_padding(char *str, t_info *info)
 {
 	int len;
+	
+	info->t_len = 0;
 	len = (str == NULL) ? 6 : ft_strlen(str);
+	if (info->extra[ZERO] == ZERO && info->width > 0 && info->extra[MINUS] != MINUS)
+	{
+		if (info->prec >= 0 && info->is_prec == 1 && info->prec < len)
+			return (set_zero(info->width - (len - (len - info->prec))));
+		else
+			return (set_zero(info->width - len));
+	}
 	if (info->prec >= 0 && info->is_prec == 1 && info->prec < len)
 		info->t_len = info->width - (len - (len - info->prec));
 	else
@@ -83,6 +92,14 @@ char	*conv_char(int c, t_info *info)
 	{
 		ret = ft_strjoin(ret, set_zero(info->width - 1));
 		ret = ft_strjoin(ret, str);
+		info->t_len++;
+		return (ret);
+	}
+	if (info->extra[ZERO] == ZERO && info->width > 0)
+	{
+		ret = ft_strjoin(ret, set_zero(info->width - 1));
+		ret = ft_strjoin(ret, str);
+		info->t_len++;
 		return (ret);
 	}
 	if (info->width > 0 && info->extra[MINUS] == 0)

@@ -6,7 +6,7 @@
 /*   By: thbrouss <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/13 14:42:44 by thbrouss     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/20 22:08:48 by thbrouss    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/22 07:17:50 by thbrouss    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -28,12 +28,12 @@ void	conv_length(t_info *info)
 {
 	if ((info->flag == D || info->flag == I) && info->length == 0)
 		info->i_arg = (info->i_arg >= 0 || info->i_arg <= 0) ? (int)info->i_arg : 0;
-	else if ((info->flag == U || info->flag == X || info->flag == LX || info->flag == O) && info->length == 0)
-		info->i_arg = (unsigned int)info->i_arg;
-	else if ((info->flag == LU || info->flag == LO || info->flag == LD))
+	else if (info->flag == LD && info->length == 0)
+		info->i_arg = (long int)info->i_arg;
+	else if ((info->flag == LU || info->flag == LO))
 		info->i_arg = ((unsigned long)info->i_arg);
-	else if (info->length == HH && !(info->flag == U || info->flag == O ||
-				info->flag == LO || info->flag == LU || info->flag == LD))
+	else if (info->length == HH && !(info->flag == O ||
+				info->flag == LO || info->flag == LD))
 		info->i_arg  = (char)info->i_arg;
 	else if(info->length == H && !(info->flag == U || info->flag == O || info->flag == LO
 				|| info->flag == LU || info->flag == LD))
@@ -44,13 +44,13 @@ void	conv_length(t_info *info)
 
 void	conv_ulength(t_info *info)
 {
+	if (info->flag == LD && info->length == 0)
+		info->u_arg = (long int)info->u_arg;
 	if ((info->flag == U || info->flag == X || info->flag == LX || info->flag == O) && info->length == 0)
 		info->u_arg = (unsigned int)info->u_arg;
-	else if (info->length == HH && !(info->flag == U || info->flag == O ||
-				info->flag == LO || info->flag == LU || info->flag == LD))
+	else if (info->length == HH && !(info->flag == LO || info->flag == LU || info->flag == LD))
 		info->u_arg = (unsigned char)info->u_arg;
-	else if(info->length == H && !(info->flag == U || info->flag == O || info->flag == LO
-				|| info->flag == LU || info->flag == LD))
+	else if(info->length == H && !(info->flag == LO || info->flag == LU || info->flag == LD))
 		info->u_arg = (unsigned short int)info->u_arg;
 	else if (info->length == L || info->length == Z || info->length == LL || info->length == J)
 		info->u_arg = (unsigned long long)info->u_arg;
@@ -70,15 +70,6 @@ void	check_end(char *str, char **curr_str, t_info *info)
 	char *tmp;
 
 	len = 0;
-	/*if (*str && *str != '%' && info->stop == 0)
-	{
-		info->stop = 1;
-		info->c_len++;
-		if (!(tmp = conv_char(*str, info)))
-			write(1, tmp, 
-		//write(1, "%", 1);
-		(*curr_str)++;
-	}*/
 	if (*str && !is_valid(*str) && info->stop == 0)
 	{
 		info->stop = 1;
